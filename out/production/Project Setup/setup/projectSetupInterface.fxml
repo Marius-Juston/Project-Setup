@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+<VBox alignment="CENTER" spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+  fx:controller="setup.Controller">
+  <padding>
+    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+  </padding>
+  <TextField fx:id="projectName" onKeyTyped="#checkText" promptText="Project name"/>
+  <ChoiceBox fx:id="languageSelection" prefWidth="150.0"/>
+  <TextField fx:id="teamNumber" onKeyTyped="#checkNumber" promptText="Team number"/>
+  <ChoiceBox fx:id="ideaSelection" prefWidth="150.0"/>
+  <Button fx:id="download" defaultButton="true" disable="true" mnemonicParsing="false" onAction="#setupProject"
+    text="Download"/>
+</VBox>
