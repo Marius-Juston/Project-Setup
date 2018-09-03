@@ -8,17 +8,17 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
-	public static void main(String[] args) {
-		launch(args);
-	}
+  public static void main(String[] args) {
+    launch(args);
+  }
 
-	@Override
-	public final void start(Stage primaryStage) throws java.io.IOException {
-		Parent root = FXMLLoader.load(getClass().getResource("projectSetupInterface.fxml"));
-		primaryStage.setTitle("Setup Project");
-		primaryStage.setScene(new Scene(root));
-		primaryStage.show();
-	}
+  @Override
+  public final void start(Stage primaryStage) throws java.io.IOException {
+    Parent root = FXMLLoader.load(getClass().getResource("projectSetupInterface.fxml"));
+    primaryStage.setTitle("Setup Project");
+    primaryStage.setScene(new Scene(root));
+    primaryStage.show();
+  }
 
 
 }
