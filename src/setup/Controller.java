@@ -14,6 +14,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
@@ -199,9 +200,10 @@ public class Controller implements Initializable {
 
         if (realDirectory.isDirectory() && filesDirectory.isDirectory()) {
           File[] content = filesDirectory.listFiles();
-          for (File aContent : content) {
-            //move content[i]
-            Files.move(aContent.toPath(), Paths.get(realDirectory.toPath().toString(), aContent.getName()));
+          if (content != null) {
+            for (File aContent : content) {
+              Files.move(aContent.toPath(), Paths.get(realDirectory.toPath().toString(), aContent.getName()));
+            }
           }
         }
 
