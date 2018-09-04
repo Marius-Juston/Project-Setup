@@ -201,7 +201,6 @@ public class Controller implements Initializable {
           File[] content = filesDirectory.listFiles();
           for (File aContent : content) {
             //move content[i]
-            System.out.println(aContent.toPath());
             Files.move(aContent.toPath(), Paths.get(realDirectory.toPath().toString(), aContent.getName()));
           }
         }
