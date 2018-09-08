@@ -38,7 +38,7 @@ public class Controller implements Initializable {
    * Size of the buffer to read/write data
    */
   private static final int BUFFER_SIZE = 4096;
-  public ChoiceBox<String> ideaSelection;
+  public ChoiceBox<String> ideSelection;
   @FXML
   private TextField projectName;
   @FXML
@@ -83,8 +83,8 @@ public class Controller implements Initializable {
     languageSelection.getItems().addAll("Java", "C++");
     languageSelection.setValue("Java");
 
-    ideaSelection.getItems().addAll("Eclipse", "Idea", "CLion");
-    ideaSelection.setValue("Idea");
+    ideSelection.getItems().addAll("Eclipse", "Idea", "CLion");
+    ideSelection.setValue("Idea");
   }
 
   private String download(String urlR, String projectName) {
@@ -209,15 +209,23 @@ public class Controller implements Initializable {
         delete(filesDirectory);
       }
 
-      String[] command = new String[3];
-      command[0] = "cmd";
-      command[1] = "/c";
-      command[2] = String.format("cd %s && gradlew idea && gradlew build && gradlew shuffleboard", realFolder);
-      Runtime.getRuntime().exec(command);
-
-      Runtime.getRuntime().exec(String.format("explorer.exe /select,%s\\src", realFolder));
+      setupGradleProject(realFolder, ideSelection.getValue().toLowerCase());
+      openFolderInExplorer(realFolder);
       ((Node) actionEvent.getTarget()).getScene().getWindow().hide();
     }
+  }
+
+  private void setupGradleProject(String folderLocation, String ide) throws IOException {
+
+    String[] command = new String[3];
+    command[0] = "cmd";
+    command[1] = "/c";
+    command[2] = String.format("cd %s && gradlew %s && gradlew build && gradlew shuffleboard", folderLocation, ide);
+    Runtime.getRuntime().exec(command);
+  }
+
+  private void openFolderInExplorer(String fileLocation) throws IOException {
+    Runtime.getRuntime().exec(String.format("explorer.exe /select,%s\\src", fileLocation));
   }
 
   private void delete(File f) throws IOException {
