@@ -14,7 +14,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
@@ -238,16 +237,16 @@ public class Controller implements Initializable {
 //			keyEvent.consume();
 //			return;
 //		}
-
-    if ((((TextInputControl) keyEvent.getTarget()).getText().length() <= 0) && keyEvent.getCharacter()
+    if (keyEvent.getCharacter().matches("[0-9\\s]")) {
+      keyEvent.consume();
+    } else if ((((TextInputControl) keyEvent.getTarget()).getText().length() <= 0) && keyEvent.getCharacter()
         .equals("\b")) {
       textCorrect = false;
       download.setDisable(true);
-      return;
+    } else {
+      textCorrect = true;
+      download.setDisable(!teamCorrect);
     }
-
-    textCorrect = true;
-    download.setDisable(!teamCorrect);
   }
 
   public final void checkNumber(KeyEvent keyEvent) {
