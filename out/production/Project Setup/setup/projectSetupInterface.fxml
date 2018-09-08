@@ -13,7 +13,7 @@
   <TextField onKeyTyped="#checkText" promptText="Project name" fx:id="projectName"/>
   <ChoiceBox prefWidth="150.0" fx:id="languageSelection"/>
   <TextField onKeyTyped="#checkNumber" promptText="Team number" fx:id="teamNumber"/>
-  <ChoiceBox prefWidth="150.0" fx:id="ideaSelection"/>
+  <ChoiceBox prefWidth="150.0" fx:id="ideSelection"/>
   <Button defaultButton="true" disable="true" mnemonicParsing="false" onAction="#setupProject" text="Download"
     fx:id="download"/>
 </VBox>
