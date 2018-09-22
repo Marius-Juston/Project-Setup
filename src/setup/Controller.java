@@ -14,6 +14,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
@@ -88,10 +89,11 @@ public class Controller implements Initializable {
   }
 
   private String download(String urlR, String projectName) {
+    projectName += ".zip";
+
     try {
       URL url = new URL(urlR);
       URLConnection conn = url.openConnection();
-      projectName += ".zip";
       try (InputStream in = conn.getInputStream(); FileOutputStream out = new FileOutputStream(projectName)) {
         byte[] b = new byte[1024];
         int count;
@@ -102,6 +104,27 @@ public class Controller implements Initializable {
 
     } catch (MalformedURLException e) {
       e.printStackTrace();
+    } catch (IOException e) {
+      projectName = offlineDownload(projectName);
+    }
+
+    return projectName;
+  }
+
+  private String offlineDownload(String projectName) {
+
+    ResourceBundle myResources = ResourceBundle
+        .getBundle("MyResources", Locale.getDefault(), ClassLoader.getSystemClassLoader());
+
+    String[] split = ((String) myResources.getObject("zipFile")).split(", ");
+    byte[] data = new byte[split.length];
+    for (int i = 0; i < split.length; i++) {
+      data[i] = Byte.parseByte(split[i]);
+    }
+
+    try (FileOutputStream fileOutputStream = new FileOutputStream(projectName)) {
+      fileOutputStream.write(data);
+      fileOutputStream.close();
     } catch (IOException e) {
       e.printStackTrace();
       projectName = null;
@@ -118,6 +141,7 @@ public class Controller implements Initializable {
       byte[] bytesIn = new byte[BUFFER_SIZE];
       int read;
       while ((read = zipIn.read(bytesIn)) != -1) {
+        System.out.println(read);
         bos.write(bytesIn, 0, read);
       }
     }
@@ -134,26 +158,38 @@ public class Controller implements Initializable {
       if (!destDir.exists()) {
         destDir.mkdir();
       }
-      ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipFilePath));
-      ZipEntry entry = zipIn.getNextEntry();
-      // iterates over entries in the zip file
-      while (entry != null) {
-        String filePath = destDirectory + File.separator + entry.getName();
-        if (entry.isDirectory()) {
-          // if the entry is a directory, make the directory
-          File dir = new File(filePath);
-          dir.mkdir();
-        } else {
-          // if the entry is a file, extracts it
-          extractFile(zipIn, filePath);
-        }
-        zipIn.closeEntry();
-        entry = zipIn.getNextEntry();
-      }
-      zipIn.close();
+
+      unzip(new FileInputStream(zipFilePath), destDirectory);
+
     } catch (IOException ignored) {
 
     }
+  }
+
+  /**
+   * Extracts a zip file specified by the zipFilePath to a directory specified by destDirectory (will be created if does
+   * not exists)
+   */
+  private void unzip(InputStream inputStream, String destDirectory) throws IOException {
+    ZipInputStream zipIn = new ZipInputStream(inputStream);
+    ZipEntry entry = zipIn.getNextEntry();
+    // iterates over entries in the zip file
+    while (entry != null) {
+      String filePath = destDirectory + File.separator + entry.getName();
+      if (entry.isDirectory()) {
+        // if the entry is a directory, make the directory
+        File dir = new File(filePath);
+        dir.mkdir();
+      } else {
+        // if the entry is a file, extracts it
+        System.out.println(filePath);
+        extractFile(zipIn, filePath);
+      }
+      zipIn.closeEntry();
+      entry = zipIn.getNextEntry();
+    }
+    inputStream.close();
+    zipIn.close();
   }
 
   public final void setupProject(ActionEvent actionEvent) throws IOException {
@@ -167,7 +203,16 @@ public class Controller implements Initializable {
     if (selectedDirectory != null && selectedDirectory.exists()) {
 
       String realFolder = selectedDirectory + File.separator + projectName.getText();
+
       String zipFileName = download(quickStart, realFolder);
+//      Path path = Paths.get(selectedDirectory.getPath(), "Quickstart.zip");
+//      System.out.println(path);
+//      Path copy = Files.copy(Paths.get("Quickstart.zip"), path);
+//      System.out.println(copy);
+//      String zipFileName = path.toAbsolutePath().toString();
+//      System.out.println(zipFileName);
+      //
+
       unzip(zipFileName, realFolder); //this was copied
 
       delete(new File(zipFileName));
