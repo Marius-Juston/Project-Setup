@@ -25,6 +25,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
@@ -40,6 +42,8 @@ public class Controller implements Initializable {
    */
   private static final int BUFFER_SIZE = 4096;
   public ChoiceBox<String> ideSelection;
+  private Alert setupTimeWait = new Alert(AlertType.INFORMATION,
+      "Please wait a minute or 2 for the project to setup. If it has finished setting up you will see Shuffleboard open");
   @FXML
   private TextField projectName;
   @FXML
@@ -124,7 +128,6 @@ public class Controller implements Initializable {
 
     try (FileOutputStream fileOutputStream = new FileOutputStream(projectName)) {
       fileOutputStream.write(data);
-      fileOutputStream.close();
     } catch (IOException e) {
       e.printStackTrace();
       projectName = null;
@@ -141,7 +144,6 @@ public class Controller implements Initializable {
       byte[] bytesIn = new byte[BUFFER_SIZE];
       int read;
       while ((read = zipIn.read(bytesIn)) != -1) {
-        System.out.println(read);
         bos.write(bytesIn, 0, read);
       }
     }
@@ -182,7 +184,6 @@ public class Controller implements Initializable {
         dir.mkdir();
       } else {
         // if the entry is a file, extracts it
-        System.out.println(filePath);
         extractFile(zipIn, filePath);
       }
       zipIn.closeEntry();
@@ -253,6 +254,8 @@ public class Controller implements Initializable {
 
         delete(filesDirectory);
       }
+
+      setupTimeWait.show();
 
       setupGradleProject(realFolder, ideSelection.getValue().toLowerCase());
       openFolderInExplorer(realFolder);
