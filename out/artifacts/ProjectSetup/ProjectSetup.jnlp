@@ -8,7 +8,7 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="ProjectSetup.jar" size="9007" download="eager" />
+    <jar href="ProjectSetup.jar" size="165339" download="eager" />
   </resources>
   <jfx:javafx-desc  width="600" height="400" main-class="setup.Main"  name="ProjectSetup" />
   <update check="background"/>
