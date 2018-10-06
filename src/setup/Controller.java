@@ -9,7 +9,6 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -26,7 +25,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -35,7 +33,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.Stage;
 
 public class Controller implements Initializable {
 
@@ -258,7 +255,6 @@ public class Controller implements Initializable {
         delete(filesDirectory);
       }
 
-
       setupGradleProject(realFolder, ideSelection.getValue().toLowerCase());
 //      setupTimeWait.show();
       openFolderInExplorer(realFolder);
@@ -273,7 +269,6 @@ public class Controller implements Initializable {
     command[1] = "/c";
     command[2] = String.format("cd %s && gradlew %s && gradlew build && gradlew shuffleboard", folderLocation, ide);
     Process proc = Runtime.getRuntime().exec(command);
-
 
     CmdOutputDisplay.show(proc);
   }
