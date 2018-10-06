@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -25,6 +26,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -33,6 +35,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.Stage;
 
 public class Controller implements Initializable {
 
@@ -255,11 +258,11 @@ public class Controller implements Initializable {
         delete(filesDirectory);
       }
 
-      setupTimeWait.show();
 
       setupGradleProject(realFolder, ideSelection.getValue().toLowerCase());
+//      setupTimeWait.show();
       openFolderInExplorer(realFolder);
-      ((Node) actionEvent.getTarget()).getScene().getWindow().hide();
+//      ((Node) actionEvent.getTarget()).getScene().getWindow().hide();
     }
   }
 
@@ -269,7 +272,10 @@ public class Controller implements Initializable {
     command[0] = "cmd";
     command[1] = "/c";
     command[2] = String.format("cd %s && gradlew %s && gradlew build && gradlew shuffleboard", folderLocation, ide);
-    Runtime.getRuntime().exec(command);
+    Process proc = Runtime.getRuntime().exec(command);
+
+
+    CmdOutputDisplay.show(proc);
   }
 
   private void openFolderInExplorer(String fileLocation) throws IOException {
