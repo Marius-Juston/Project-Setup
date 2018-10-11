@@ -217,6 +217,8 @@ public class Controller implements Initializable {
       unzip(zipFileName, realFolder); //this was copied
 
       delete(new File(zipFileName));
+
+//      TODO use enum instead
       String language = languageSelection.getValue().equals("Java") ? "cpp" : "java";
       String deletedLanguageDirectory = realFolder + File.separator + language;
       language = language.equals("java") ? "cpp" : "java";
@@ -237,23 +239,11 @@ public class Controller implements Initializable {
 
         replaceSelected(gradleBuildFile, "5333", teamNumber.getText());
         replaceSelected(gradleBuildFile, "0000", teamNumber.getText());
+        String robotJavaFile = Paths.get(newTeamNamePath.getPath(), "robot", "Robot.java").toString();
+        replaceSelected(robotJavaFile, "0000", teamNumber.getText());
       }
 
-      {
-        File realDirectory = new File(realFolder);
-        File filesDirectory = new File(languageDirectory);
-
-        if (realDirectory.isDirectory() && filesDirectory.isDirectory()) {
-          File[] content = filesDirectory.listFiles();
-          if (content != null) {
-            for (File aContent : content) {
-              Files.move(aContent.toPath(), Paths.get(realDirectory.toPath().toString(), aContent.getName()));
-            }
-          }
-        }
-
-        delete(filesDirectory);
-      }
+      moveFolder(languageDirectory, realFolder);
 
       setupGradleProject(realFolder, ideSelection.getValue().toLowerCase());
 //      setupTimeWait.show();
@@ -262,12 +252,39 @@ public class Controller implements Initializable {
     }
   }
 
+  private void moveFolder(String fromDirectory, String toDirectory) throws IOException {
+    File filesDirectory = new File(fromDirectory);
+    File realDirectory = new File(toDirectory);
+
+    if (realDirectory.isDirectory() && filesDirectory.isDirectory()) {
+      File[] content = filesDirectory.listFiles();
+      if (content != null) {
+        for (File aContent : content) {
+          Files.move(aContent.toPath(), Paths.get(realDirectory.toPath().toString(), aContent.getName()));
+        }
+      }
+    }
+
+    delete(filesDirectory);
+  }
+
   private void setupGradleProject(String folderLocation, String ide) throws IOException {
 
+    /*
+    Using the cmd.
     String[] command = new String[3];
     command[0] = "cmd";
     command[1] = "/c";
     command[2] = String.format("cd %s && gradlew %s && gradlew build && gradlew shuffleboard", folderLocation, ide);
+    */
+
+    String[] command = new String[2];
+    command[0] = "powershell.exe";
+    command[1] = String
+        .format(
+            "Get-Location; Set-Location -Path %s; Get-Location; .\\gradlew %s; .\\gradlew build; .\\gradlew shuffleboard",
+            folderLocation, ide);
+
     Process proc = Runtime.getRuntime().exec(command);
 
     CmdOutputDisplay.show(proc);
