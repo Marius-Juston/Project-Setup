@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -81,6 +82,26 @@ public class Controller implements Initializable {
 
       bufferedOutputStream.write(inputStr.getBytes());
     }
+  }
+
+  private String getGradleVersion() throws IOException {
+    String[] command = new String[2];
+    command[0] = "powershell.exe";
+    command[1] = "gradle -version";
+    Process process = Runtime.getRuntime().exec(command);
+
+    BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+    String gradle = stdInput.lines().filter(s -> s.startsWith("Gradle")).findFirst().orElse("4.4");
+
+    Pattern compile = Pattern.compile("(\\d+\\.\\d+)");
+    Matcher group = compile.matcher(gradle);
+
+    if (group.find()) {
+      gradle = group.group(1);
+    }
+
+    return gradle;
   }
 
   @Override
@@ -237,6 +258,9 @@ public class Controller implements Initializable {
       if (language.equals("java")) {
         String gradleBuildFile = Paths.get(realFolder, language, "build.gradle").toString();
 
+        String gradleVersion = getGradleVersion();
+        replaceSelected(gradleBuildFile, "4.4", gradleVersion);
+
         replaceSelected(gradleBuildFile, "5333", teamNumber.getText());
         replaceSelected(gradleBuildFile, "0000", teamNumber.getText());
         String robotJavaFile = Paths.get(newTeamNamePath.getPath(), "robot", "Robot.java").toString();
@@ -282,7 +306,7 @@ public class Controller implements Initializable {
     command[0] = "powershell.exe";
     command[1] = String
         .format(
-            "Get-Location; Set-Location -Path %s; Get-Location; .\\gradlew %s; .\\gradlew build; .\\gradlew shuffleboard",
+            "Get-Location; Set-Location -Path %s; Get-Location; gradle wrapper; .\\gradlew %s; .\\gradlew build; .\\gradlew shuffleboard",
             folderLocation, ide);
 
     Process proc = Runtime.getRuntime().exec(command);
