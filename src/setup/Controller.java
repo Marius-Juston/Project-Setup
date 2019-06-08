@@ -113,8 +113,8 @@ public class Controller implements Initializable {
     ideSelection.setValue("Idea");
   }
 
-  private String download(String urlR, String projectName) {
-    projectName += ".zip";
+  public static String download(String urlR, String projectName) {
+//    projectName += ".zip";
 
     try {
       URL url = new URL(urlR);
@@ -136,7 +136,7 @@ public class Controller implements Initializable {
     return projectName;
   }
 
-  private String offlineDownload(String projectName) {
+  private static String offlineDownload(String projectName) {
 
     ResourceBundle myResources = ResourceBundle
         .getBundle("MyResources", Locale.getDefault(), ClassLoader.getSystemClassLoader());
